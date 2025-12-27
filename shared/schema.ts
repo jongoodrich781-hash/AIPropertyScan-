@@ -86,29 +86,30 @@ export const yardAnalyses = pgTable("yard_analyses", {
 });
 
 export type YardAnalysisData = {
-  currentCondition: string;
-  suggestions: Array<{
-    title: string;
-    description: string;
-    priority: number;
-    estimatedCost: number;
-    valueIncrease: number;
+  conditionAssessment: Array<{
+    component: string;
+    conditionScore: number;
+    issues: string[];
+    confidence: number;
   }>;
-  estimatedCost: {
-    min: number;
-    max: number;
+  repairs: Array<{
+    component: string;
+    recommendation: string;
+    materials: Array<{ name: string; quantity: string; costRange: string }>;
+    diySteps: string[];
+    proRecommended: boolean;
+    costRange: { low: number; high: number };
+  }>;
+  roi: {
+    currentValue: number;
+    projectedValue: number;
+    rentUplift: number;
+    roiPercentage: number;
+    paybackPeriodMonths: number;
   };
-  valueIncrease: {
-    amount: number;
-    percentage: number;
-  };
-  style: string;
-  improvements: string[];
-  pricing: {
-    diy: number;
-    lowGradeContractor: number;
-    highGradeContractor: number;
-  };
+  costBreakdown: Array<{ component: string; low: number; high: number }>;
+  totalCost: { low: number; high: number };
+  estimatedTime: string;
   beforeImage: string;
   afterImage: string;
 };
