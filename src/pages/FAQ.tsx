@@ -49,7 +49,7 @@ const faqSections: FAQSection[] = [
         answer: "Top fixes ranked by ROI; estimated cost ranges with confidence bands; projected resale or rental uplift; before/after mockups where available; and a contractor-ready PDF scope listing tasks and budget ranges."
       },
       {
-        question: "How accurate are the cost estimates and uplift projections?",
+        question: "See how we estimate costs and confidence ranges",
         answer: "We use regional cost baselines and local comps to produce conservative ranges and a confidence indicator for each estimate. Estimates are designed to guide decisions and speed contractor quoting, not to replace an on-site inspection."
       }
     ]
@@ -213,14 +213,7 @@ export default function FAQ() {
 
           <div className="mt-8 text-center text-sm text-muted-foreground">
             <p>
-              Need help?{" "}
-              <Link href="/privacy" className="text-primary hover:underline">
-                View our Privacy Policy
-              </Link>
-              {" "}or{" "}
-              <Link href="/terms" className="text-primary hover:underline">
-                Terms of Service
-              </Link>
+              Need help? Request a demo or contact support.
             </p>
           </div>
         </motion.div>

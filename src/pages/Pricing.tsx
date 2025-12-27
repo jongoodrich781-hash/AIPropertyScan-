@@ -43,7 +43,8 @@ const TIER_FEATURES = {
     name: "Basic",
     tagline: "For homeowners who want simple repair insights",
     features: [
-      { text: "Upload up to 10 photos/month", included: true },
+      { text: "1 single curbview report", included: true },
+      { text: "1 full property report", included: true },
       { text: "AI repair recommendations", included: true },
       { text: "Estimated repair costs", included: true },
       { text: "Basic ROI calculator", included: true },
@@ -62,7 +63,8 @@ const TIER_FEATURES = {
     tagline: "For landlords & small investors managing multiple units",
     popular: true,
     features: [
-      { text: "Upload up to 50 photos/month", included: true },
+      { text: "5 curbside reports", included: true },
+      { text: "5 full property reports", included: true },
       { text: "AI repair recommendations", included: true },
       { text: "Advanced ROI analysis (cash flow, rent increase)", included: true },
       { text: "Portfolio dashboard for multiple properties", included: true },
