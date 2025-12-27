@@ -2,10 +2,38 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import multer from "multer";
 import { analyzeYardImages } from "./ai";
+import { db } from "./db";
+import { yardAnalyses } from "./shared/schema";
 
 const upload = multer({ storage: multer.memoryStorage() });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Test endpoint to verify AI configuration
+  app.get("/api/test-ai", async (req, res) => {
+    try {
+      const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
+      const baseUrl = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL;
+      
+      if (!apiKey || !baseUrl) {
+        return res.status(500).json({
+          configured: false,
+          message: "AI environment variables not configured",
+          apiKeySet: !!apiKey,
+          baseUrlSet: !!baseUrl,
+        });
+      }
+
+      res.json({
+        configured: true,
+        message: "AI configuration is ready",
+        baseUrl: baseUrl,
+        apiKeyPrefix: apiKey.substring(0, 10) + "...",
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   app.post(
     "/api/analyze-yard",
     upload.fields([
@@ -28,6 +56,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(400).json({ error: "Front image is required" });
         }
 
+        console.log("Starting analysis for ZIP code:", zipCode);
+        console.log("Analysis type:", analysisType);
+        console.log("Files received:", Object.keys(files));
+
         const imageSet = {
           front: files.front[0].buffer.toString("base64"),
           right: files.right?.[0]?.buffer.toString("base64") || "",
@@ -41,11 +73,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
           analysisType,
         };
 
-        const analysis = await analyzeYardImages(imageSet);
-        res.json(analysis);
+        console.log("Calling AI analysis...");
+        const analysisData = await analyzeYardImages(imageSet);
+        console.log("AI analysis complete");
+
+        // Save to database
+        const [savedAnalysis] = await db.insert(yardAnalyses).values({
+          imageUrl: analysisData.beforeImage,
+          zipCode,
+          analysis: analysisData,
+        }).returning();
+
+        console.log("Analysis saved to database:", savedAnalysis.id);
+
+        res.json(savedAnalysis);
       } catch (error: any) {
         console.error("Analysis error:", error);
-        res.status(500).json({ error: error.message || "Failed to analyze property" });
+        res.status(500).json({ 
+          error: error.message || "Failed to analyze property",
+          details: error.stack,
+        });
       }
     }
   );
